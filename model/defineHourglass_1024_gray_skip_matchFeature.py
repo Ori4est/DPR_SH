@@ -189,14 +189,14 @@ class HourglassNet(nn.Module):
         #feat = F.relu(self.bn_3(self.conv_3(feat)))
         #out_img = self.output(feat)
         #out_img = torch.sigmoid(out_img)
-
+        pred_light = self.light
         # for training, we need the original image 
         # to supervise the bottle neck layer feature
         out_feat_ori = None
         if not oriImg is None:
             _, out_feat_ori, _ = self.HG3(oriImg, target_light, 0, skip_count)
 
-        return out_feat, out_light, out_feat_ori, feat
+        return out_feat, out_light, out_feat_ori, feat, pred_light
 
 class HourglassNet_1024(nn.Module):
     '''
@@ -237,7 +237,7 @@ class HourglassNet_1024(nn.Module):
             feat_ori = F.relu(self.pre_bn(feat_ori))
             oriImg = self.downSample(feat_ori)
 
-        out_feat, out_light, out_feat_ori, feat = self.model_512(feat, target_light, skip_count, oriImg)
+        out_feat, out_light, out_feat_ori, feat, pred_light = self.model_512(feat, target_light, skip_count, oriImg)
         feat = self.upSample(feat)
 
         feat = F.relu(self.bn_1(self.conv_1(feat)))
@@ -246,7 +246,7 @@ class HourglassNet_1024(nn.Module):
         out_img = self.output(feat)
         out_img = torch.sigmoid(out_img)
 
-        return out_img, out_feat, out_light, out_feat_ori
+        return out_img, out_feat, out_light, out_feat_ori, pred_light
 
 
 if __name__ == '__main__':
